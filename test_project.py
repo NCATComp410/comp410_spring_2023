@@ -108,6 +108,12 @@ class ProjectTestCase(unittest.TestCase):
         results = area_code_lookup(','.join(data['Phone']))
         # make sure they are equal
         self.assertDictEqual(expected, results)
+    
+    def test_area_code_prefixes(self):
+        #test for none U.S. states and territories
+        expected = [487, 522, 652, 642, 784, 591, 880, 348, 933, 987, 627, 893, 595, 866, 211, 627, 328, 766, 969, 544, 995, 492, 421, 381, 249, 594, 482, 494, 596, 889, 932, 411, 696, 789, 922, 900, 902, 358, 871, 388, 550]
+        results = area_code_prefixes()
+        self.assertListEqual(expected,results)
 
     def test_state_name(self):
         # Test for state_to_abb_dict
@@ -180,6 +186,14 @@ class ProjectTestCase(unittest.TestCase):
         # 'Enumeration at Entry', 'Territories', 'Railroad Board**', 'Not Issued'
         # Therefore expected total is 56
         self.assertEqual(len(assigned), 56)
+
+    
+        
+
+       
+    
+
+    
 
 
 if __name__ == '__main__':

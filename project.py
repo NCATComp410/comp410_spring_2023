@@ -113,69 +113,71 @@ def area_code_lookup(phone_nums:str) -> dict:
     return output_dict
 
 
-def get_state_abbrev_freq(text_states: str) -> dict:
-    #Dictionary of States to Abbrev.
-    state_to_abb_dict = {
-    "Alabama": "AL",
-    "Alaska": "AK",
-    "Arizona": "AZ",
-    "Arkansas": "AR",
-    "California": "CA",
-    "Colorado": "CO",
-    "Connecticut": "CT",
-    "Delaware": "DE",
-    "Florida": "FL",
-    "Georgia": "GA",
-    "Hawaii": "HI",
-    "Idaho": "ID",
-    "Illinois": "IL",
-    "Indiana": "IN",
-    "Iowa": "IA",
-    "Kansas": "KS",
-    "Kentucky": "KY",
-    "Louisiana": "LA",
-    "Maine": "ME",
-    "Maryland": "MD",
-    "Massachusetts": "MA",
-    "Michigan": "MI",
-    "Minnesota": "MN",
-    "Mississippi": "MS",
-    "Missouri": "MO",
-    "Montana": "MT",
-    "Nebraska": "NE",
-    "Nevada": "NV",
-    "New Hampshire": "NH",
-    "New Jersey": "NJ",
-    "New Mexico": "NM",
-    "New York": "NY",
-    "North Carolina": "NC",
-    "North Dakota": "ND",
-    "Ohio": "OH",
-    "Oklahoma": "OK",
-    "Oregon": "OR",
-    "Pennsylvania": "PA",
-    "Rhode Island": "RI",
-    "South Carolina": "SC",
-    "South Dakota": "SD",
-    "Tennessee": "TN",
-    "Texas": "TX",
-    "Utah": "UT",
-    "Vermont": "VT",
-    "Virginia": "VA",
-    "Washington": "WA",
-    "West Virginia": "WV",
-    "Wisconsin": "WI",
-    "Wyoming": "WY",
-    "District of Columbia": "DC",
-    "American Samoa": "AS",
-    "Guam": "GU",
-    "Northern Mariana Islands": "MP",
-    "Puerto Rico": "PR",
-    "United States Minor Outlying Islands": "UM",
-    "U.S. Virgin Islands": "VI",
-
+def get_state_abbrev() -> dict:
+    """Returns a dict of state abbreviations and corresponding states"""
+    return {
+        "Alabama": "AL",
+        "Alaska": "AK",
+        "Arizona": "AZ",
+        "Arkansas": "AR",
+        "California": "CA",
+        "Colorado": "CO",
+        "Connecticut": "CT",
+        "Delaware": "DE",
+        "Florida": "FL",
+        "Georgia": "GA",
+        "Hawaii": "HI",
+        "Idaho": "ID",
+        "Illinois": "IL",
+        "Indiana": "IN",
+        "Iowa": "IA",
+        "Kansas": "KS",
+        "Kentucky": "KY",
+        "Louisiana": "LA",
+        "Maine": "ME",
+        "Maryland": "MD",
+        "Massachusetts": "MA",
+        "Michigan": "MI",
+        "Minnesota": "MN",
+        "Mississippi": "MS",
+        "Missouri": "MO",
+        "Montana": "MT",
+        "Nebraska": "NE",
+        "Nevada": "NV",
+        "New Hampshire": "NH",
+        "New Jersey": "NJ",
+        "New Mexico": "NM",
+        "New York": "NY",
+        "North Carolina": "NC",
+        "North Dakota": "ND",
+        "Ohio": "OH",
+        "Oklahoma": "OK",
+        "Oregon": "OR",
+        "Pennsylvania": "PA",
+        "Rhode Island": "RI",
+        "South Carolina": "SC",
+        "South Dakota": "SD",
+        "Tennessee": "TN",
+        "Texas": "TX",
+        "Utah": "UT",
+        "Vermont": "VT",
+        "Virginia": "VA",
+        "Washington": "WA",
+        "West Virginia": "WV",
+        "Wisconsin": "WI",
+        "Wyoming": "WY",
+        "District of Columbia": "DC",
+        "American Samoa": "AS",
+        "Guam": "GU",
+        "Northern Mariana Islands": "MP",
+        "Puerto Rico": "PR",
+        "United States Minor Outlying Islands": "UM",
+        "U.S. Virgin Islands": "VI"
     }
 
+
+def get_state_abbrev_freq(text_states: str) -> dict:
+    state_to_abb_dict = get_state_abbrev()
     states = [x.strip() for x in text_states.split(",")]
     state_freq_dict = {}
     
@@ -267,8 +269,30 @@ def get_credit_card_type(text: str) -> dict:
     return results
 
 
+def area_code_prefixes() -> list:
+    """Returns a list of area code prefixes that do not belong to the US and its territories"""
+
+    state_abbrev = get_state_abbrev() # get a dict of abbreviations
+    ac_dict = get_area_codes() # get a dict of area codes and their abbreviations
+    data = read_csv_file('data.csv') # read the data from the data.csv file
+    phone_nums_dict = data['Phone'] # get a list of phone numbers
+    phone_nums_list = phone_nums_dict # does not really make any difference, I could have kept 'phone_nums_dict', I did it just for name sake
+    output_list = [] # create an empty list
+    for num in phone_nums_list:
+        m = re.match(r"(\d{3})-\d{3}-\d{4}", num)
+        # if a valid phone number is found, get the area code prefix
+        if m:
+            area_code = m.group(1) # get the area code prefix from the phone numbers in phone_nums_list
+            if int(area_code) > 200 and ac_dict[area_code] not in state_abbrev.values():
+                output_list.append(int(area_code))
+
+    return output_list
+
+
 if __name__ == '__main__':
     print(show_aggie_pride(), end='\n\n')
+
+    print(area_code_prefixes())
 
     # read the data file
     csv_data = read_csv_file('data.csv')
